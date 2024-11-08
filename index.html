@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicciones de Población - Pakistán</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('pexels-aadil-3103373.jpg'); 
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.6); 
+            padding: 20px;
+        }
+        .banner {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            background-image: url('banner.jpg');
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #4bcaf4;
+        }
+        .calculator {
+            background-color: #222;
+            padding: 20px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+        .description {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .description img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .graph-container {
+            margin-top: 20px;
+        }
+        .info-button {
+            background-color: #444;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Predicciones de Población de Pakistán</h1>
+
+    <!-- Banner -->
+    <div class="banner"></div>
+
+    
+
+    <!-- Calculadora 1: Modelo Exponencial -->
+    <div class="calculator" id="calculator1">
+        <h2>Modelo Exponencial</h2>
+        <div class="description">
+            <p>Este modelo asume un crecimiento exponencial continuo sin restricciones, ideal para poblaciones en crecimiento rápido sin limitantes ambientales.</p>
+            <img src="graficas.jpg" alt="Ejemplo de crecimiento exponencial">
+        </div>
+        <p>\(\frac{dP}{dt} = rP\)</p>
+        <input type="number" id="year1" placeholder="Ingrese el año">
+        <button onclick="calculateExponential()">Calcular</button>
+        <p id="result1"></p>
+        <button class="info-button" onclick="showInfo(1)">Más información</button>
+        <div class="graph-container">
+            <canvas id="graph1"></canvas>
+        </div>
+    </div>
+
+    <!-- Calculadora 2: Modelo Logístico -->
+    <div class="calculator" id="calculator2">
+        <h2>Modelo Logístico</h2>
+        <div class="description">
+            <p>Este modelo incorpora la capacidad de carga y limita el crecimiento a un máximo poblacional que el entorno puede sostener.</p>
+            <img src="graficas1.jpg" alt="Ejemplo de crecimiento logístico">
+        </div>
+        <p>\(\frac{dP}{dt} = rP \left(1 - \frac{P}{K}\right)\)</p>
+        <input type="number" id="year2" placeholder="Ingrese el año">
+        <button onclick="calculateLogistic()">Calcular</button>
+        <p id="result2"></p>
+        <button class="info-button" onclick="showInfo(2)">Más información</button>
+        <div class="graph-container">
+            <canvas id="graph2"></canvas>
+        </div>
+    </div>
+
+    <!-- Calculadora 3: Transformada de Laplace -->
+    <div class="calculator" id="calculator3">
+        <h2>Transformada de Laplace</h2>
+        <div class="description">
+            <p>La transformada de Laplace permite resolver ecuaciones diferenciales complejas, aplicable en modelos avanzados de dinámica poblacional.</p>
+            <img src="imagen_laplace.jpg" alt="Ejemplo de transformada de Laplace en dinámica poblacional">
+        </div>
+        <p>\[
+            \mathcal{L}\{f(t)\} = \int_0^{\infty} e^{-st} f(t) \, dt
+        \]</p>
+        <input type="number" id="year3" placeholder="Ingrese el año">
+        <button onclick="calculateLaplace()">Calcular</button>
+        <p id="result3"></p>
+        <button class="info-button" onclick="showInfo(3)">Más información</button>
+        <div class="graph-container">
+            <canvas id="graph3"></canvas>
+        </div>
+    </div>
+
+    
+    <footer>
+        <h3>Referencias</h3>
+        <p>1. Pakistán - Población. (2023). Datos Macro.</p>
+    </footer>
+
+    <script>
+        // Parámetros iniciales para cálculos
+        const r = 0.03;
+        const K = 5196.929;
+        const P0 = 54.629;
+
+        function calculateExponential() {
+            const year = parseInt(document.getElementById("year1").value);
+            if (isNaN(year)) {
+                document.getElementById("result1").innerText = "Por favor, ingrese un año válido.";
+                return;
+            }
+            const timeElapsed = year - 1967;
+            const result = P0 * Math.exp(r * timeElapsed);
+            document.getElementById("result1").innerText = `Población proyectada para el año ${year}: ${result.toFixed(2)}`;
+            renderGraph([P0, result], 'graph1', 'Proyección Exponencial');
+        }
+
+        function calculateLogistic() {
+            const year = parseInt(document.getElementById("year2").value);
+            if (isNaN(year)) {
+                document.getElementById("result2").innerText = "Por favor, ingrese un año válido.";
+                return;
+            }
+            const timeElapsed = year - 1967;
+            const result = K / (1 + ((K - P0) / P0) * Math.exp(-r * timeElapsed));
+            document.getElementById("result2").innerText = `Población proyectada para el año ${year}: ${result.toFixed(2)}`;
+            renderGraph([P0, result], 'graph2', 'Proyección Logística');
+        }
+
+        function calculateLaplace() {
+            const year = parseInt(document.getElementById("year3").value);
+            if (isNaN(year)) {
+                document.getElementById("result3").innerText = "Por favor, ingrese un año válido.";
+                return;
+            }
+            const timeElapsed = year - 1967;
+            const result = K / (1 + ((K - P0) / P0) * Math.exp(-r * timeElapsed));
+            document.getElementById("result3").innerText = `Población proyectada para el año ${year}: ${result.toFixed(2)}`;
+            renderGraph([P0, result], 'graph3', 'Proyección con Transformada de Laplace');
+        }
+
+        function renderGraph(data, canvasId, label) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Año inicial', 'Año proyectado'],
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: label
+                        }
+                    }
+                },
+            });
+        }
+
+        function showInfo(calculator) {
+            let infoText;
+            if (calculator === 1) {
+                infoText = "Modelo Exponencial: Calcula el crecimiento sin límite poblacional.";
+            } else if (calculator === 2) {
+                infoText = "Modelo Logístico: Considera un límite poblacional (capacidad de carga).";
+            } else if (calculator === 3) {
+                infoText = "Transformada de Laplace: Usa un modelo complejo para resolver ecuaciones diferenciales.";
+            }
+            alert(infoText);
+        }
+    </script>
+
+</body>
+</html>
